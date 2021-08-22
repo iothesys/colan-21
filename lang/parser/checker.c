@@ -101,13 +101,19 @@ static void handle_macro(pnode_t *node) {
     *node = exec_command(subject, command);
 }
 
+void eh_setnote();
+
 static void rec_checker(pnode_t *node) {
     struct Vec OF(strview_t) decls = vec_new(sizeof(strview_t));
     switch (node->kind) {
         case PN_DECL:
             if (map_get(&env, node->data.decl.name) != NULL) {
-                eh_error_pos(node->pos, "Variable shadows previous declaration");
-                exit(1);
+                pnode_t *previous = map_get(&env, node->data.decl.name);
+                EH_MESSAGE("Variable shadowed by following declaration");
+                eh_error_pos(previous->pos, parser_get_state()->lexer.src);
+                eh_setnote();
+                EH_MESSAGE("Shadowed here");
+                err(node);
             }   
             map_add(&env, node->data.decl.name, node);
             vec_push(&decls, &node->data.decl.name);

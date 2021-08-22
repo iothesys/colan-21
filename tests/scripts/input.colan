@@ -4,5 +4,6 @@ main := proc () void {
     # ^f
     x := 3;
     x = x + 4;
+    x := 3;
     print("3 + 4 is", x);
 };

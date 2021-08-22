@@ -55,12 +55,22 @@ void eh_point(usize col) {
     fprintf(stderr, "%s^%s\n", ansi("\x1b[1;31m"), ansi("\x1b[0m"));
 }
 
+static bool note = false;
+
+void eh_setnote() {
+    note = true;
+}
+
 void eh_error(usize line, usize col, const string src) {
     const string file = filename != NULL ? filename : "(file unknown)";
-    fprintf(stderr, "%serror%s: %s\n", ansi("\x1b[1;31m"), ansi("\x1b[0m"), sbend(&builder));
+    string str = "\x1b[1;31merror";
+    if (note) {
+        note = false;
+        str = "\x1b[1;32mnote";
+    }
+    fprintf(stderr, "%s%s: %s\n", str, ansi("\x1b[0m"), sbend(&builder));
     fprintf(stderr, "        %s| %s:%zu:%zu\n%s", ansi("\x1b[1;36m"), file, line+1, col+1, ansi("\x1b[1;0m"));
     fprintf(stderr, "        %s|-----------------------%s\n", ansi("\x1b[1;36m"), ansi("\x1b[1;0m"));
-    if (line > 1) eh_at_line(line-2, src);
     if (line > 0) eh_at_line(line-1, src);
     eh_at_line(line, src);
     eh_point(col);
