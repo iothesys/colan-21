@@ -98,7 +98,7 @@ There are a few types in the language that one must be aware of;
 2. *int* is a signed integer.
 3. *proc* is a function.
 4. *string* is... ...a... string!
-5. *void* is used exclusively as the return type of functions that return nothing.
+5. *void* is used exclusively as the return type of functions that return nothing. Technically not a type on an implementation level.
 6. There is no dedicated boolean type, you use integers for boolean operations like in C.
 
 Declaring a variable is a pretty straightforward. First you type the variable's name, then you declare it's type. You can also assign it a value. for example:
@@ -181,7 +181,7 @@ main := proc () void {
 In COLAN-21, we have the `while` which works exactly like in C, however we only have that type of loop.
 
 ### Structs
-In COLAN-21, structs work almost like in C. But due to the WIP nature of the language, they are a bit dangerous to use at the moment, so make sure your types match because there is nothing preventing you from feeding garbage values to a struct. Members are accessed with an apostrophe. To create a variable of defined struct, the `new` keyword is used, however it shouldn't be confused with the concept of implied memory allocation object oriented languages typically have with `new`. `new` only means "I'm making a struct here" and not "I'm allocating memory on the heap for an object".
+In COLAN-21, structs work almost like in C. But due to the WIP nature of the language, they are a bit dangerous to use at the moment, so make sure your types match because there is nothing preventing you from feeding garbage values to a struct. Members are accessed with an apostrophe. To create a variable of defined struct, the `new` keyword is used, however it shouldn't be confused with the concept of implied memory allocation object oriented languages typically have with `new`. `new` only means "I'm making a struct here" and not "I'm allocating memory on the heap for an object". Do note that when passed as an argument, a struct is passed by value and thus is copied rather than referenced.
 
 Here's an example of how to use a struct:
 ```c
@@ -199,7 +199,7 @@ main := proc () void {
 ```
 
 ### Arrays
-Arrays in COLAN-21 are static and have an explicit keyword for them. Declaring an array is like declaring any other variable; you first type out the name and the type however you must add an extra `:` before the type. Then after the assignment operator you will enclose within the braces a comma separated list of values. Another `:` is typed before the opening brace. Do note this is temporary and eventually the much more readable `arr` will replace the colon.
+Arrays in COLAN-21 are static and have an explicit keyword for them. Declaring an array is like declaring any other variable; you first type out the name and the type however you must add an extra `:` before the type. Then after the assignment operator you will enclose within the braces a comma separated list of values. Another `:` is typed before the opening brace. Do note this is temporary and eventually the much more readable `arr` will replace the colon. Do note that when passed as an argument, an array is currently being passed by value and thus is copied rather than referenced. This is a temporary and arrays will eventually be passed by reference.
 
 Here's an example:
 ```c
