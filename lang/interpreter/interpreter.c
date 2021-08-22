@@ -1,3 +1,5 @@
+
+
 #include "interpreter.h"
 #include "../eh.h"
 
@@ -244,7 +246,8 @@ static enum Interpreter_Type resolve_type(strview_t name) {
     if (strview_eq(name, strview_from("float")))    return IT_INT;    else 
     if (strview_eq(name, strview_from("struct"))) return IT_STRUCT;    else 
     if (strview_eq(name, strview_from("float")))  return IT_FLOAT;  else 
-    if (strview_eq(name, strview_from("string"))) return IT_STRING;
+    if (strview_eq(name, strview_from("string"))) return IT_STRING; else
+    if (strview_eq(name, strview_from("void"))) return IT_VOID; else
     if (strview_eq(name, strview_from("_"))) return IT_VOID;
     else {
         EH_MESSAGE("Unknown type: '%.*s'", (int)name.size, name.view);
@@ -300,6 +303,9 @@ static struct Interpreter_Value assign(struct Parser_Node* node) {
         dstval = faccess(dst);
     else if (dst->kind == PN_FIELD)
         dstval = field(dst);
+    else if (dst->kind == PN_IDENT) {
+        dstval = get_var(dst->data.ident.val);
+    }
     else {
         EH_MESSAGE("Cannot assign to value");
         error_pos(dst->pos);

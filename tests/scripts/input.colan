@@ -3,5 +3,6 @@ main := proc () void {
     # ^sus
     # ^f
     x := 3;
-    print([x | isset sus], [x | isset flag]);
+    x = x + 4;
+    print("3 + 4 is", x);
 };
