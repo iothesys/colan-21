@@ -7,7 +7,7 @@ COLAN-21 was developped by Ishidex (iothesys) and Jacob (jacobsebek) with help o
 COLAN-21 is relatively simple to learn, especially for those who are familiar with C-like languages. It's a bit rough on the edges, but keep in mind that the developers only had 48 hours with little sleep to make it. However you'll find a language that can run simple programs easily and which has a very helpful error handler that can help you spot errors in your code.
 
 ### Running Scripts
-Once you have the COLAN-21 project files on your system, open the terminal in the *c-chads* folder and type *make all*. This will build the interpreter in the *bin* folder.
+Once you have the COLAN-21 project files on your system, open the terminal in the project folder and type *make all*. This will build the interpreter in the *bin* folder.
 
 To run a COLAN-21 program, you have to open a terminal and type: `path\to\COLAN-21 path\to\program`. COLAN-21 source files have either the *.colan* or *.c21* extension. The former being the dejure extension while the latter is the defacto extension. That's because when Doigt started writing test scripts, he wasn't told what the developers had decided for that matter and everyone just went along with the *.c21* extension he had made up, probably because it's shorter to type. Anyways, whichever you choose to use is up to you.
 
@@ -30,6 +30,7 @@ A few things to note:
 * The assignment operator seems to be `:=`, but later you will notice that  `=` is also used for assignement. The difference between both assignment operators will be explained later, but for now, just trust this guide.
 * The return type of the function is just before the block opening brace.
 * The proc keyword is used to tell the interpreter that the variable is a function.
+* `void` has accidentally been removed and is currently known as `_`. It is unclear if `void` will return.
 
 ### Syntax
 
@@ -138,16 +139,16 @@ The integer value of *50* is casted into a `float` before being multiplied by *.
 
 ### Operators
 COLAN-21 has all or most of the tradionational operators usually present in a programming language:
-* +  add
-* -  substract
-* *  multiply
+* \+  add
+* \-  substract
+* \*  multiply
 * /  divide
 * %  modulo
 * |  bitwise or
 * ^  bitwise xor
 * &  bitwise and
 * <<     left bitshift
-* >>     right bitshift
+* \>\>     right bitshift
 * ||     or
 * &&     and
 * !  unary not
