@@ -264,6 +264,7 @@ static enum Interpreter_Type resolve_type(strview_t name) {
     if (strview_eq(name, strview_from("float")))  return IT_FLOAT;  else 
     if (strview_eq(name, strview_from("string"))) return IT_STRING; else
     if (strview_eq(name, strview_from("void"))) return IT_VOID; else
+    if (strview_eq(name, strview_from("void"))) return IT_VOID; else
     if (strview_eq(name, strview_from("_"))) return IT_VOID;
     else {
         EH_MESSAGE("Unknown type: '%.*s'", (int)name.size, name.view);

@@ -365,19 +365,32 @@ static pnode_t maybe_call() {
 static pnode_t declaration(tok_t on);
 
 static struct Parser_Type typedecl() {
+    ptok(peek());
     struct Vec OF(usize) depths = vec_new(sizeof(usize));
-    while (peek().tt == TT_INTEGER || peek().tt == TT_OF) {
-        usize siz = 0;
-        if (peek().tt == TT_INTEGER) {
-            tok_t t = pull();
-            siz = (usize)strtol((const char *)(t.span.from+parser.lexer.src), NULL, 10);
-        }
-        vec_push(&depths, &siz);
-        skip_tt(TT_OF);
+    usize depth = 0;
+    while (peek().tt == TT_ARR) {
+        pull();
+        skip_tt(TT_LBRACE);
+        depth += 1;
     }
     setexpect("Expected type name");
     tok_t token = pull();
     assert_tt(&token, TT_IDENT);
+    while (depth > 0) {
+        usize siz = 0;
+        if (peek().tt == TT_COMMA) {
+            skip_tt(TT_COMMA);
+            tok_t t = pull();
+            assert_tt(&t, TT_INTEGER);
+            siz = (usize)strtol((const char *)(t.span.from+parser.lexer.src), NULL, 10);
+        }
+        vec_push(&depths, &siz);
+        skip_tt(TT_RBRACE);
+        depth -= 1;
+    }
+    for (usize i = 0; i < depths.size; i += 1) {
+        printf("%zu\n", *(usize*)vec_get(&depths, i));
+    }
     setexpect(NULL);
     return (struct Parser_Type) {
         .name = strview_span(token.span, parser.lexer.src),

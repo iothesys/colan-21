@@ -1,13 +1,4 @@
-sqrt := proc (n: float) float {
-    x := 1.0;
-    iter := 100;
-    while (iter) {
-        x = x - ((x * x)-n)/(x*2.0);
-        iter = iter - 1;
-    }
-    return x;
-};
-
 main := proc () void {
-    print(sqrt(2.0));
+    a : arr {arr {int}, 32} = arr {1, 2, 3, 1}; 
+    print(len(a));
 };
