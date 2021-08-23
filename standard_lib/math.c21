@@ -69,7 +69,7 @@ floor = proc (value : float) int {
 # this one is retarded and will have to be redone
 round = proc (value : float) int {
 
-    if (value < float(int(value)) + .5) return int(value);
+    if (value < . || value < float(int(value)) + .5) return int(value);
     return int(value) + 1;
 };
 
