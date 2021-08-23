@@ -102,3 +102,27 @@ tau = proc () float { return 6.2831853071795862; };
 pi = proc () float { return 3.1415926535897931; };
 
 e = proc () float { return 2.7182818284590451; };
+
+factorial := proc (n : int) int {
+
+    if (!n) return 1;
+    else return n * factorial(n - 1);
+};
+
+sqrt := proc (n: float) float {
+    x := 1.0;
+    iter := 100;
+    while (iter) {
+        x = x - ((x * x)-n)/(x*2.0);
+        iter = iter - 1;
+    }
+    return x;
+};
+
+fib := proc(n: int) int {
+    if (n < 2) {
+        return n;
+    }
+
+    return fib(n - 1) + fib(n - 2);
+};
