@@ -34,6 +34,21 @@ static struct Interpreter_Value void_val() {
     return (struct Interpreter_Value){ IT_VOID, {0} };
 }
 
+static struct Interpreter_Value transfer_value(struct Interpreter_Value *v) {
+    struct Interpreter_Value newv = *v;
+    if (v->type == IT_STRUCT) {
+        struct Map *m = &v->data.strct.fields;
+        newv.data.strct.fields = map_new(sizeof(struct Interpreter_Value));
+
+        for (usize i = 0; i < m->keys.size; i += 1) {
+            strview_t *k = vec_get(&m->keys, i);
+            struct Interpreter_Value val = transfer_value(vec_get(&m->values, i));
+            map_add(&newv.data.strct.fields, *k, &val);
+        }
+    }
+    return newv;
+}
+
 #include <stdio.h>
 static struct Interpreter_Value cfunc_print(struct Vec OF(struct Interpreter_Value) *args) {
 
@@ -197,7 +212,7 @@ static struct Interpreter_Value call(struct Parser_Node* node) {
     struct Interpreter_Value* func = get_var(pnode_left(node)->data.ident.val);
 
     struct Map* oldframe = intrp.vars;
-    struct Map vars = map_new(sizeof(struct Vec));
+    struct Map vars = map_new(sizeof(struct Interpreter_Value));
 
     struct Vec* args = &pnode_right(node)->children;
 
@@ -221,11 +236,13 @@ static struct Interpreter_Value call(struct Parser_Node* node) {
 
             struct Vec* params = &pnode_left(func->data.func.ast)->children;
             for (usize i = 0; i < args->size; i++) {
-                struct Interpreter_Value arg = intrp_run(vec_get(args, i), NULL);
+                struct Interpreter_Value tmp = intrp_run(vec_get(args, i), NULL);
+                struct Interpreter_Value arg = transfer_value(&tmp);
                 struct Parser_Node* fdecl = vec_get(params, i);
                 map_add(&vars, fdecl->data.decl.name, &arg);
             }
             intrp.vars = &vars;
+
             ret = execute(pnode_right(func->data.func.ast), NULL);
         } break;
         default:

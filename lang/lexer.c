@@ -28,6 +28,7 @@ const string TT_NAMES[256] = {
     [TT_RETURN] = "Return",
     [TT_PROC] = "Proc",
     [TT_NEW] = "New",
+    [TT_ARR] = "Arr",
 };
  
 struct Lexer_State lex_new(const string input) {
@@ -232,6 +233,9 @@ static enum Token_Type check_for_keyword(struct Lexer_State *self, struct Token 
         return TT_STRUCT;
     }
     if (spanstreqstr(tok->span, self->src, "new")) {
+        return TT_NEW;
+    }
+    if (spanstreqstr(tok->span, self->src, "arr")) {
         return TT_NEW;
     }
     return TT_INVALID;

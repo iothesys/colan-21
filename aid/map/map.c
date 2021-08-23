@@ -49,6 +49,15 @@ void map_remove(struct Map *self, strview_t key) {
     vec_remove(&self->values, index);
 }
 
+void map_printf(struct Map *self) {
+    printf("MAP DUMP START\n");
+    for (usize i = 0; i < self->keys.size; i += 1) {
+        strview_t *sp = vec_get(&self->keys, i);
+        printf("%10.*s :: %p\n", (int)sp->size, sp->view, vec_get(&self->values, i));
+    }
+    printf("MAP DUMP END\n");
+}
+
 void map_drop(struct Map *self) {
     vec_drop(&self->keys);
     vec_drop(&self->values);

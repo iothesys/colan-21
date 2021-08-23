@@ -568,7 +568,7 @@ static pnode_t value() {
         case TT_STRUCT:
             pull();
             return delimited(PN_STRUCT, "{", TT_COMMA, "}", false, false, pulldeclaration);
-        case TT_DEF:
+        case TT_ARR:
             pull();
             return delimited(PN_LIST, "{", TT_COMMA, "}", false, false, most_important_expression);
         case TT_PROC:

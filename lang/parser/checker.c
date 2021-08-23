@@ -103,8 +103,7 @@ static void handle_macro(pnode_t *node) {
 
 void eh_setnote();
 
-static void rec_checker(pnode_t *node) {
-    struct Vec OF(strview_t) decls = vec_new(sizeof(strview_t));
+static void rec_checker(pnode_t *node, struct Vec OF(strview_t) *decls) {
     switch (node->kind) {
         case PN_DECL:
             if (map_get(&env, node->data.decl.name) != NULL) {
@@ -116,7 +115,7 @@ static void rec_checker(pnode_t *node) {
                 err(node);
             }   
             map_add(&env, node->data.decl.name, node);
-            vec_push(&decls, &node->data.decl.name);
+            vec_push(decls, &node->data.decl.name);
             for (usize i = 0; i < node->children.size; i += 1) {
                 handle_macro(vec_get(&node->children, i));
             }
@@ -124,17 +123,28 @@ static void rec_checker(pnode_t *node) {
         case PN_MACRO:
             handle_macro(node);
         break;
+        case PN_PROC: 
+        case PN_STRUCT: {
+            struct Vec OF(strview_t) mydecls = vec_new(sizeof(strview_t));
+            for (usize i = 0; i < node->children.size; i += 1) {
+                rec_checker(vec_get(&node->children, i), &mydecls);
+            }
+            for (usize i = 0; i < mydecls.size; i += 1) {
+                map_remove(&env, *(strview_t*)vec_get(&mydecls, i));
+            }
+            vec_drop(&mydecls);
+        }
+        break;
         default: 
             for (usize i = 0; i < node->children.size; i += 1) {
-                rec_checker(vec_get(&node->children, i));
+                rec_checker(vec_get(&node->children, i), decls);
             }
     }
- //   for (usize i = 0; i < decls.size; i += 1) {
- //       map_remove(&env, *(strview_t*)vec_get(&decls, i));
- //   }
 } 
 
 void checker_run(pnode_t *node) {
     env = map_new(sizeof(struct Parser_Node));
-    rec_checker(node);
+    struct Vec decls = vec_new(sizeof(strview_t));
+    rec_checker(node, &decls);
+    vec_drop(&decls);
 }

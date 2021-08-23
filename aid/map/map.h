@@ -14,3 +14,4 @@ void map_add(struct Map *self, strview_t key, void *value);
 void* map_get(struct Map *self, strview_t key);
 void map_remove(struct Map *self, strview_t key);
 void map_drop(struct Map *self);
+void map_printf(struct Map *self);

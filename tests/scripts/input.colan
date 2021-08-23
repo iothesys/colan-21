@@ -1,9 +1,16 @@
+Vec2 := struct {
+    x: int,
+    y: int
+};
+
+f := proc(i: Vec2) void {
+    i'x = 4;
+    print("i is", i'x);
+};
+
 main := proc () void {
-    #test
-    # ^sus
-    # ^f
-    x := 3;
-    x = x + 4;
-    x := 3;
-    print("3 + 4 is", x);
+    x := new Vec2 { x: 2, y: 3 };
+    i := 3;
+    f(x);
+    print(x'x, i);
 };

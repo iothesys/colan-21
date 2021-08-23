@@ -37,7 +37,8 @@ enum Token_Type {
     TT_PROC,
     TT_STRUCT,
     TT_PIPE,
-    TT_NEW
+    TT_NEW,
+    TT_ARR
 };
 
 extern const string TT_NAMES[];
