@@ -1,14 +1,14 @@
-square = proc (value : int) int {
+square := proc (value : int) int {
 
     return value * value;
 };
 
-square_float = proc (value : f) float {
+square_float := proc (value : f) float {
 
     return value * value;
 };
 
-power = proc (value : int, exponent : int) int {
+power := proc (value : int, exponent : int) int {
 
     i := 0;
     while (i < exponent) {
@@ -20,7 +20,7 @@ power = proc (value : int, exponent : int) int {
     return value;
 };
 
-power_float = proc (value : float, exponent : int) int {
+power_float := proc (value : float, exponent : int) int {
 
     i := 0;
     while (i < exponent) {
@@ -32,75 +32,75 @@ power_float = proc (value : float, exponent : int) int {
     return value;
 };
 
-absolute = proc (value : int) int {
+absolute := proc (value : int) int {
 
     if (value < 0) return value  * -1;
     return value;
 };
 
-absolute_float = proc (value : float) float {
+absolute_float := proc (value : float) float {
 
     if (value < .) value * -1.;
     return value;
 };
 
-cube = proc (value : int) int {
+cube := proc (value : int) int {
 
     return value * value * value;
 };
 
-cube_float = proc (value : float) float {
+cube_float := proc (value : float) float {
 
     return value * value * value;
 };
 
-ceiling = proc (value : float) int {
+ceiling := proc (value : float) int {
 
     if (value >= . && value > float(int(value))) return int(value) + 1;
     return int(value);
 };
 
-floor = proc (value : float) int {
+floor := proc (value : float) int {
 
     if (value < . && float(int(value)) > value) return int(value) - 1;
     return int(value);
 };
 
-round = proc (value : float) int {
+round := proc (value : float) int {
 
     if (value < . || value < float(int(value)) + .5) return int(value);
     return int(value) + 1;
 };
 
-maximum = proc (a : int, b : int) int {
+maximum := proc (a : int, b : int) int {
 
     if (a > b) return a;
     return b;
 };
 
-maximum_float = proc (a : float, b : float) float {
+maximum_float := proc (a : float, b : float) float {
 
     if (a > b) return a;
     return b;
 };
 
-minimum = proc (a : int, b : int) int {
+minimum := proc (a : int, b : int) int {
 
     if (a < b) return a;
     return b;
 };
 
-minimum_float = proc (a : float, b : float) float {
+minimum_float := proc (a : float, b : float) float {
 
     if (a < b) return a;
     return b;
 };
 
-tau = proc () float { return 6.2831853071795862; };
+tau := 6.2831853071795862;
 
-pi = proc () float { return 3.1415926535897931; };
+pi := 3.1415926535897931;
 
-e = proc () float { return 2.7182818284590451; };
+e := 2.7182818284590451;
 
 factorial := proc (n : int) int {
 
@@ -139,4 +139,18 @@ average := proc (values : :float) float {
     }
 
     return result / float(count);
+};
+
+median := proc (values : :float) float {
+
+    count := len(values);
+
+    # odd
+    if (count % 2) {
+
+        return values{round(float(count) / 2. - 1.)}
+    }
+
+    # even
+    return (values{count / 2 - 1} + values{count / 2}) / 2.;
 };
