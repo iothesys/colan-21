@@ -66,7 +66,6 @@ floor = proc (value : float) int {
     return int(value);
 };
 
-# this one is retarded and will have to be redone
 round = proc (value : float) int {
 
     if (value < . || value < float(int(value)) + .5) return int(value);
@@ -125,4 +124,19 @@ fib := proc(n: int) int {
     }
 
     return fib(n - 1) + fib(n - 2);
+};
+
+average := proc (values : :float) float {
+
+    count := len(values);
+    i = 0;
+    result := .;
+
+    while (i < count) {
+
+        result = result + values{i};
+        i = i + 1;
+    }
+
+    return result / float(count);
 };
