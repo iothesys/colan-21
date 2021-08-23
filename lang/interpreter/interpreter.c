@@ -260,7 +260,6 @@ static struct Interpreter_Value call(struct Parser_Node* node) {
 static enum Interpreter_Type resolve_type(strview_t name) {
     if (name.view[0] == ':') return IT_ARRAY;
     if (strview_eq(name, strview_from("int")))    return IT_INT;    else 
-    if (strview_eq(name, strview_from("float")))    return IT_INT;    else 
     if (strview_eq(name, strview_from("struct"))) return IT_STRUCT;    else 
     if (strview_eq(name, strview_from("float")))  return IT_FLOAT;  else 
     if (strview_eq(name, strview_from("string"))) return IT_STRING; else

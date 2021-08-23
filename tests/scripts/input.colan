@@ -1,16 +1,13 @@
-Vec2 := struct {
-    x: int,
-    y: int
-};
-
-f := proc(i: Vec2) void {
-    i'x = 4;
-    print("i is", i'x);
+sqrt := proc (n: float) float {
+    x := 1.0;
+    iter := 100;
+    while (iter) {
+        x = x - ((x * x)-n)/(x*2.0);
+        iter = iter - 1;
+    }
+    return x;
 };
 
 main := proc () void {
-    x := new Vec2 { x: 2, y: 3 };
-    i := 3;
-    f(x);
-    print(x'x, i);
+    print(sqrt(2.0));
 };

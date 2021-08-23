@@ -366,14 +366,14 @@ static pnode_t declaration(tok_t on);
 
 static struct Parser_Type typedecl() {
     struct Vec OF(usize) depths = vec_new(sizeof(usize));
-    while (peek().tt == TT_INTEGER || peek().tt == TT_DEF) {
+    while (peek().tt == TT_INTEGER || peek().tt == TT_OF) {
         usize siz = 0;
         if (peek().tt == TT_INTEGER) {
             tok_t t = pull();
             siz = (usize)strtol((const char *)(t.span.from+parser.lexer.src), NULL, 10);
         }
         vec_push(&depths, &siz);
-        skip_tt(TT_DEF);
+        skip_tt(TT_OF);
     }
     setexpect("Expected type name");
     tok_t token = pull();

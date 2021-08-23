@@ -236,7 +236,7 @@ static enum Token_Type check_for_keyword(struct Lexer_State *self, struct Token 
         return TT_NEW;
     }
     if (spanstreqstr(tok->span, self->src, "arr")) {
-        return TT_NEW;
+        return TT_ARR;
     }
     return TT_INVALID;
 }
