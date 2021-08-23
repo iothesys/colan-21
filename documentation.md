@@ -77,14 +77,18 @@ Variables names are case sensitive and can have letters, numbers and underscores
 
 #### Keywords
 COLAN-21 has a few reserved keywords that you cannot use for variable names;
+* arr
 * else
 * float
 * if
 * int
+* len
+* new
 * print
 * proc
 * return
 * string
+* struct
 * void
 * while
 
@@ -94,7 +98,7 @@ There are a few types in the language that one must be aware of;
 2. *int* is a signed integer.
 3. *proc* is a function.
 4. *string* is... ...a... string!
-5. *void* is used exclusively as the return type of functions that return nothing.
+5. *void* is used exclusively as the return type of functions that return nothing. Technically not a type on an implementation level.
 6. There is no dedicated boolean type, you use integers for boolean operations like in C.
 
 Declaring a variable is a pretty straightforward. First you type the variable's name, then you declare it's type. You can also assign it a value. for example:
@@ -176,5 +180,33 @@ main := proc () void {
 ### Loops
 In COLAN-21, we have the `while` which works exactly like in C, however we only have that type of loop.
 
-### Other Features
-COLAN-21 alos supports arrays, lists, structs, recursion and other features, however those were implemented while this guide was being written and the writer of this guide is thus unaware of how those work in concrete detail. It is advised to check the example scripts and test scripts in *tests/scripts*
+### Structs
+In COLAN-21, structs work almost like in C. But due to the WIP nature of the language, they are a bit dangerous to use at the moment, so make sure your types match because there is nothing preventing you from feeding garbage values to a struct. Members are accessed with an apostrophe. To create a variable of defined struct, the `new` keyword is used, however it shouldn't be confused with the concept of implied memory allocation object oriented languages typically have with `new`. `new` only means "I'm making a struct here" and not "I'm allocating memory on the heap for an object". Do note that when passed as an argument, a struct is passed by value and thus is copied rather than referenced.
+
+Here's an example of how to use a struct:
+```c
+Person := struct {
+
+    age: int,
+    name: string
+};
+
+main := proc () void {
+
+    doigt := new Person { age: 24, name: "Doigt" };
+    print("Hello, my name is ", doigt'name, " and I'm a ", doigt'age, " computer science student.");
+};
+```
+
+### Arrays
+Arrays in COLAN-21 are static and have an explicit keyword for them. Declaring an array is like declaring any other variable; you first type out the name and the type however you must add an extra `:` before the type. Then after the assignment operator you will enclose within the braces a comma separated list of values. Another `:` is typed before the opening brace. Do note this is temporary and eventually the much more readable `arr` will replace the colon. Do note that when passed as an argument, an array is currently being passed by value and thus is copied rather than referenced. This is a temporary and arrays will eventually be passed by reference.
+
+Here's an example:
+```c
+intarr : :int = :{1, 2, 3}; # type can be inferred too
+print(int{0}); # 1
+int{0} = 2;
+
+i := 0
+while (i < len(intarr)) print(intarr{i});
+```
