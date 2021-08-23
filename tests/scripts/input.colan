@@ -1,4 +1,4 @@
 main := proc () void {
-    a : arr {arr {int}, 32} = arr {1, 2, 3, 1}; 
+    a : arr {int} = arr {1, 2, 3, 1}; 
     print(len(a));
 };

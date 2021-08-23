@@ -257,18 +257,19 @@ static struct Interpreter_Value call(struct Parser_Node* node) {
     return ret;
 }
 
-static enum Interpreter_Type resolve_type(strview_t name) {
-    if (name.view[0] == ':') return IT_ARRAY;
-    if (strview_eq(name, strview_from("int")))    return IT_INT;    else 
-    if (strview_eq(name, strview_from("struct"))) return IT_STRUCT;    else 
-    if (strview_eq(name, strview_from("float")))  return IT_FLOAT;  else 
-    if (strview_eq(name, strview_from("string"))) return IT_STRING; else
-    if (strview_eq(name, strview_from("void"))) return IT_VOID; else
-    if (strview_eq(name, strview_from("void"))) return IT_VOID; else
-    if (strview_eq(name, strview_from("_"))) return IT_VOID;
+static enum Interpreter_Type resolve_type(struct Parser_Type type) {
+    if (type.name.view[0] == ':') return IT_ARRAY;
+    if (type.depths.size > 0) return IT_VOID;                               else
+    if (strview_eq(type.name, strview_from("int")))    return IT_INT;       else 
+    if (strview_eq(type.name, strview_from("struct"))) return IT_STRUCT;    else 
+    if (strview_eq(type.name, strview_from("float")))  return IT_FLOAT;     else 
+    if (strview_eq(type.name, strview_from("string"))) return IT_STRING;    else
+    if (strview_eq(type.name, strview_from("void"))) return IT_VOID;        else
+    // THIS IS TEMPORARY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if (strview_eq(type.name, strview_from("_"))) return IT_VOID;
     else {
-        EH_MESSAGE("Unknown type: '%.*s'", (int)name.size, name.view);
-        error_pos(get_pos(name));    
+        EH_MESSAGE("Unknown type: '%.*s'", (int)type.name.size, type.name.view);
+        error_pos(get_pos(type.name));    
     }
 
     return IT_VOID;
@@ -276,7 +277,7 @@ static enum Interpreter_Type resolve_type(strview_t name) {
 
 static void declaration(struct Parser_Node* node) {
     struct Interpreter_Value var = {
-        .type = resolve_type(node->data.decl.type.name)
+        .type = resolve_type(node->data.decl.type)
     };
     map_add(intrp.vars, node->data.decl.name, &var);   
 }
@@ -388,7 +389,7 @@ struct Interpreter_Value intrp_run(struct Parser_Node* node, bool* should_return
         break;
         case PN_PROC:
             ret.type = IT_FUNC;
-            ret.data.func.rettype = resolve_type(node->data.proc.return_type.name);
+            ret.data.func.rettype = resolve_type(node->data.proc.return_type);
             ret.data.func.ast = node;
         break;
         case PN_STRUCT:
@@ -397,7 +398,7 @@ struct Interpreter_Value intrp_run(struct Parser_Node* node, bool* should_return
            
             for (usize i = 0; i < node->children.size; i++) {
                 struct Parser_Node* fdecl = vec_get(&node->children, i);
-                enum Interpreter_Type type = resolve_type(fdecl->data.decl.type.name);
+                enum Interpreter_Type type = resolve_type(fdecl->data.decl.type);
                 map_add(&ret.data.strctdecl.fields, fdecl->data.decl.name, &type);
             }
         break;

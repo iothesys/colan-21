@@ -345,7 +345,6 @@ static pnode_t maybe_call() {
         return pnode_binary(start, PN_CALL, left, delimited(PN_PARAMS, "(", TT_COMMA, ")", false, false, most_important_expression));
     else if (check("{")) {
         skip_tt(TT_LBRACE);
-        ptok(peek());
         pnode_t node = pnode_binary(start, PN_ACCESS, left, most_important_expression());
         skip_tt(TT_RBRACE);
         return node;
@@ -365,7 +364,6 @@ static pnode_t maybe_call() {
 static pnode_t declaration(tok_t on);
 
 static struct Parser_Type typedecl() {
-    ptok(peek());
     struct Vec OF(usize) depths = vec_new(sizeof(usize));
     usize depth = 0;
     while (peek().tt == TT_ARR) {
@@ -387,9 +385,6 @@ static struct Parser_Type typedecl() {
         vec_push(&depths, &siz);
         skip_tt(TT_RBRACE);
         depth -= 1;
-    }
-    for (usize i = 0; i < depths.size; i += 1) {
-        printf("%zu\n", *(usize*)vec_get(&depths, i));
     }
     setexpect(NULL);
     return (struct Parser_Type) {
@@ -580,14 +575,19 @@ static pnode_t value() {
         }
         case TT_STRUCT:
             pull();
-            return delimited(PN_STRUCT, "{", TT_COMMA, "}", false, false, pulldeclaration);
+            return delimited(PN_STRUCT, "{", TT_SEMI, "}", true, false, pulldeclaration);
         case TT_ARR:
             pull();
             return delimited(PN_LIST, "{", TT_COMMA, "}", false, false, most_important_expression);
         case TT_PROC:
             pull();
             pnode_t left = delimited(PN_TYPELIST, "(", TT_COMMA, ")", false, false, pulldeclaration);
-            struct Parser_Type returntype = typedecl();
+            struct Parser_Type returntype = {
+                .depths = vec_new(sizeof(usize)),
+                .name = strview_from("void")
+            };
+            if (peek().tt != TT_LBRACE)
+                returntype = typedecl();
             value_node = pnode_binary(
                 start,
                 PN_PROC, 
