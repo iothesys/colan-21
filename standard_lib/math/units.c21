@@ -1,29 +1,29 @@
-celsius_to_farenheit := proc (celsius : float) float {
+celsius_to_farenheit :: (celsius : float) float {
 
     return celsius * 1.8 + 32.;
-};
+}
 
-celsius_to_kelvin := proc (celsius : float) float {
+celsius_to_kelvin :: (celsius : float) float {
 
     return celsius + 273.15;
-};
+}
 
-farenheit_to_celsius := proc (farenheit : float) float {
+farenheit_to_celsius :: (farenheit : float) float {
 
     return (farenheit - 32.) * (5. / 9.);
-};
+}
 
-farenheit_to_kelvin := proc (farenheit : float) float {
+farenheit_to_kelvin :: (farenheit : float) float {
 
     return (farenheit + 459.67) * (5. / 9.);
-};
+}
 
-kelvin_to_celsius := proc (kelvin : float) float {
+kelvin_to_celsius :: (kelvin : float) float {
 
     return kelvin − 273.15;
-};
+}
 
-kelvin_to_farenheit := proc (kelvin : float) float {
+kelvin_to_farenheit :: (kelvin : float) float {
 
     return kelvin * 1.8 - 459.67;
-};
+}

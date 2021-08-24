@@ -1,14 +1,14 @@
-square := proc (value : int) int {
+square :: (value : int) int {
 
     return value * value;
-};
+}
 
-square_float := proc (value : f) float {
+square_float :: (value : f) float {
 
     return value * value;
-};
+}
 
-power := proc (value : int, exponent : int) int {
+power :: (value : int, exponent : int) int {
 
     i := 0;
     while (i < exponent) {
@@ -18,9 +18,9 @@ power := proc (value : int, exponent : int) int {
     }
 
     return value;
-};
+}
 
-power_float := proc (value : float, exponent : int) int {
+power_float :: (value : float, exponent : int) int {
 
     i := 0;
     while (i < exponent) {
@@ -30,71 +30,71 @@ power_float := proc (value : float, exponent : int) int {
     }
 
     return value;
-};
+}
 
-absolute := proc (value : int) int {
+absolute :: (value : int) int {
 
     if (value < 0) return value  * -1;
     return value;
-};
+}
 
-absolute_float := proc (value : float) float {
+absolute_float :: (value : float) float {
 
     if (value < .) value * -1.;
     return value;
-};
+}
 
-cube := proc (value : int) int {
-
-    return value * value * value;
-};
-
-cube_float := proc (value : float) float {
+cube :: (value : int) int {
 
     return value * value * value;
-};
+}
 
-ceiling := proc (value : float) int {
+cube_float :: (value : float) float {
+
+    return value * value * value;
+}
+
+ceiling :: (value : float) int {
 
     if (value >= . && value > float(int(value))) return int(value) + 1;
     return int(value);
-};
+}
 
-floor := proc (value : float) int {
+floor :: (value : float) int {
 
     if (value < . && float(int(value)) > value) return int(value) - 1;
     return int(value);
-};
+}
 
-round := proc (value : float) int {
+round :: (value : float) int {
 
     if (value < . || value < float(int(value)) + .5) return int(value);
     return int(value) + 1;
-};
+}
 
-maximum := proc (a : int, b : int) int {
-
-    if (a > b) return a;
-    return b;
-};
-
-maximum_float := proc (a : float, b : float) float {
+maximum :: (a : int, b : int) int {
 
     if (a > b) return a;
     return b;
-};
+}
 
-minimum := proc (a : int, b : int) int {
+maximum_float :: (a : float, b : float) float {
+
+    if (a > b) return a;
+    return b;
+}
+
+minimum :: (a : int, b : int) int {
 
     if (a < b) return a;
     return b;
-};
+}
 
-minimum_float := proc (a : float, b : float) float {
+minimum_float :: (a : float, b : float) float {
 
     if (a < b) return a;
     return b;
-};
+}
 
 tau := 6.2831853071795862;
 
@@ -102,13 +102,13 @@ pi := 3.1415926535897931;
 
 e := 2.7182818284590451;
 
-factorial := proc (n : int) int {
+factorial :: (n : int) int {
 
     if (!n) return 1;
     else return n * factorial(n - 1);
-};
+}
 
-sqrt := proc (n: float) float {
+sqrt :: (n: float) float {
     x := 1.0;
     iter := 100;
     while (iter) {
@@ -116,17 +116,17 @@ sqrt := proc (n: float) float {
         iter = iter - 1;
     }
     return x;
-};
+}
 
-fib := proc(n: int) int {
+fib ::(n: int) int {
     if (n < 2) {
         return n;
     }
 
     return fib(n - 1) + fib(n - 2);
-};
+}
 
-average := proc (values : :float) float {
+average :: (values : :float) float {
 
     count := len(values);
     i = 0;
@@ -134,14 +134,16 @@ average := proc (values : :float) float {
 
     while (i < count) {
 
-        result = result + values{i};
+        result = result + values{i}
         i = i + 1;
     }
 
     return result / float(count);
-};
+}
 
-median := proc (values : :float) float {
+# For now, the responsibility of sorting the values is the
+# burden of the user, however I'll have to do that myself eventually.
+median :: (values : :float) float {
 
     count := len(values);
 
@@ -153,4 +155,22 @@ median := proc (values : :float) float {
 
     # even
     return (values{count / 2 - 1} + values{count / 2}) / 2.;
-};
+}
+
+binomial_coefficient :: proc (n : int, k : int) int {
+
+    if (k < 0 || k > n) return 0;
+    if (!k || k == n) return 1;
+
+    k = minimum(k, n - k);
+    result = 1;
+    i = 0;
+
+    while (i < k) {
+
+        result = result * (n - i) / (i + 1);
+        i = i + 1;
+    }
+
+    return result;
+}
