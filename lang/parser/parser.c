@@ -12,6 +12,7 @@ bool ignore_semi = false;
 struct {
     rune unmatched;
     string expected;
+    usize expect_prio;
     usize delimpos;
     bool fail, panicking;
 } error_handling = {
@@ -87,8 +88,11 @@ static bool isinval(pnode_t node) {
     return node.kind == PN_INVAL;
 }
 
-static void setexpect(string expect) {
-    error_handling.expected = expect;
+static void setexpect(string expect, size_t prio) {
+    if (error_handling.expect_prio <= prio) { 
+        error_handling.expect_prio = prio;
+        error_handling.expected = expect;
+    }
 }
 
 static void enddelim(rune prev) {
@@ -297,11 +301,11 @@ pnode_t pnode_endpoint(usize pos, pnode_kind_t kind) {
 
 static pnode_t delimited(pnode_kind_t kind, const string open, enum Token_Type between, const string shut, bool mustclose, bool autohandle, pnode_t callback()) {
     if (kind == PN_TYPELIST) 
-        setexpect("Did you mean to create a parameter list?");
+        setexpect("Did you mean to create a parameter list?", 1);
     pnode_t node = pnode_listing(pos(), kind);
     add_comments();
     skip_v(open);
-    setexpect(NULL);
+    setexpect(NULL, 0);
     rune delim = begindelim(*open);
     while (!check(shut)) {
         add_comments();
@@ -322,15 +326,15 @@ static pnode_t delimited(pnode_kind_t kind, const string open, enum Token_Type b
         else if (!autohandle)
             if (!check(shut) || mustclose) { 
                 if (between == TT_COMMA)
-                    setexpect("Expected comma instead");
+                    setexpect("Expected comma instead", 1);
                 else if (between == TT_SEMI)
-                    setexpect("Expected semicolon instead");
+                    setexpect("Expected semicolon instead", 1);
                 skip_tt(between);
-                setexpect(NULL);
+                setexpect(NULL, 0);
             }
         skipdelim(between);
     }
-    setexpect(NULL);
+    setexpect(NULL, 0);
     enddelim(delim);
     skip_v(shut);
     return node;
@@ -352,7 +356,7 @@ static pnode_t maybe_call() {
             left = node;
         }
         else if (check("'")) {
-            setexpect("If you want array access, use a{index} syntax");
+            setexpect("If you want array access, use a{index} syntax", 1);
             pull();
             tok_t name = pull();
             assert_tt(&name, TT_IDENT);
@@ -377,7 +381,7 @@ static struct Parser_Type typedecl() {
         skip_tt(TT_LBRACE);
         depth += 1;
     }
-    setexpect("Expected type name");
+    setexpect("Expected type name", 1);
     tok_t token = pull();
     assert_tt(&token, TT_IDENT);
     while (depth > 0) {
@@ -392,7 +396,7 @@ static struct Parser_Type typedecl() {
         skip_tt(TT_RBRACE);
         depth -= 1;
     }
-    setexpect(NULL);
+    setexpect(NULL, 1);
     return (struct Parser_Type) {
         .name = strview_span(token.span, parser.lexer.src),
         .depths = depths
@@ -465,11 +469,11 @@ static pnode_t statement() {
     else if (check("while")) {
         skip_v("while");
         rune delim = begindelim('(');
-        setexpect("(While requires condition wrapped in parentheses)");
+        setexpect("(While requires condition wrapped in parentheses)", 1);
         skip_v("(");
         pnode_t left = most_important_expression();
         skip_v(")");
-        setexpect(NULL);
+        setexpect(NULL, 1);
         enddelim(delim);
         pnode_t node = pnode_binary(start, PN_WHILE, left, statement());
         return node;
@@ -483,11 +487,11 @@ static pnode_t statement() {
     else if (check("if")) {
         skip_v("if");
         rune delim = begindelim('(');
-        setexpect("(Ifs require condition wrapped in parentheses)");
+        setexpect("(Ifs require condition wrapped in parentheses)", 1);
         skip_v("(");
         pnode_t cond = most_important_expression();
         skip_v(")");
-        setexpect(NULL);
+        setexpect(NULL, 1);
         enddelim(delim);
         pnode_t body = statement();
         if (check("else")) {
@@ -501,9 +505,9 @@ static pnode_t statement() {
     }
     pnode_t node = most_important_expression();
     if (!ignore_semi) {
-        setexpect("Expected semicolon instead");
+        setexpect("Expected semicolon instead", 1);
         skip_tt(TT_SEMI);
-        setexpect(NULL);
+        setexpect(NULL, 1);
     }
     else
         skipdelim(TT_SEMI);
@@ -561,14 +565,14 @@ static pnode_t atom() {
 
 static pnode_t macro() {
     usize start = pos();
-    setexpect("Macros are limited to only basic features, refer to documentation");
+    setexpect("Macros are limited to only basic features, refer to documentation", 1);
     pnode_t node = pnode_listing(start, PN_COMMAND);
     while (!(check("|") || check("]"))) {
         pnode_t n = atom();
         if (isinval(n)) break;
         pnode_attach(&node, n);
     }
-    setexpect(NULL);
+    setexpect(NULL, 1);
     return node;
 }
 
@@ -652,9 +656,9 @@ static pnode_t value() {
 static pnode_t declaration(tok_t on) {
     usize start = pos();
     assert_tt(&on, TT_IDENT);
-    setexpect("Expected `:` followed by type");
+    setexpect("Expected `:` followed by type", 1);
     skip_tt(TT_DEF);
-    setexpect(NULL);
+    setexpect(NULL, 1);
     pnode_t decl_node = pnode_endpoint(start, PN_DECL);
     decl_node.data.decl.name = strview_span(on.span, parser.lexer.src);
     decl_node.data.decl.type = (struct Parser_Type) {
@@ -669,8 +673,11 @@ static pnode_t declaration(tok_t on) {
     // Is constant?
     if (check(":")) {
         pull();
+        if (check("("))
+          setexpect("If you are trying to create a procedure, you might have forgotten to put `proc` keyword before the `(`", 2);
         decl_node.data.decl.constant = true;
         decl_node = pnode_binary(start, PN_ASSIGN, decl_node, most_important_expression());
+        setexpect(NULL, 0);
     }
     return decl_node;
 }

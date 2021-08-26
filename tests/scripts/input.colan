@@ -1,16 +1,17 @@
-Vec2 :: struct {
-    x: float;
-    y: float;
+X :: struct {
+  x: _;
+}
+
+absolute :: proc (x: float) float {
+  if (x < .) {
+    return -x;
+  }
+  else {
+    return x;
+  }
 }
 
 main :: proc () {
-    x : arr {Vec2} = arr {
-        new Vec2 { x: 32, y: 32 },
-        new Vec2 { x: 10, y: 20 }
-    };
-    print(x{0}'x);
+  print(absolute(1.0));
+  print(absolute(-1.0));
 }
-
-
-
-

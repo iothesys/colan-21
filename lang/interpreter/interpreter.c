@@ -206,10 +206,10 @@ static void val_drop(struct Interpreter_Value* val) {
     break;
     }
 }
-
+static enum Interpreter_Type resolve_type(struct Parser_Type type);
 static struct Interpreter_Value call(struct Parser_Node* node) {
-
-    struct Interpreter_Value* func = get_var(pnode_left(node)->data.ident.val);
+    bool dummy = 0;
+    struct Interpreter_Value func = intrp_run(pnode_left(node), &dummy);
 
     struct Map* oldframe = intrp.vars;
     struct Map vars = map_new(sizeof(struct Interpreter_Value));
@@ -217,7 +217,7 @@ static struct Interpreter_Value call(struct Parser_Node* node) {
     struct Vec* args = &pnode_right(node)->children;
 
     struct Interpreter_Value ret = void_val(); 
-    switch (func->type) {
+    switch (func.type) {
         case IT_CFUNC: {
             intrp.cfunc_call_pos = node->pos;
 
@@ -228,24 +228,31 @@ static struct Interpreter_Value call(struct Parser_Node* node) {
             }
 
             intrp.vars = &vars;
-            ret = func->data.cfunc.func(&params);
+            ret = func.data.cfunc.func(&params);
             vec_drop(&params);
         } break;
         case IT_FUNC: {
-            intrp.rettype = func->data.func.rettype;
+            intrp.rettype = func.data.func.rettype;
 
-            struct Vec* params = &pnode_left(func->data.func.ast)->children;
+            struct Vec* params = &pnode_left(func.data.func.ast)->children;
             for (usize i = 0; i < args->size; i++) {
-                struct Interpreter_Value tmp = intrp_run(vec_get(args, i), NULL);
+                struct Parser_Node *pnode = vec_get(args, i);
+                struct Interpreter_Value tmp = intrp_run(pnode, NULL);
                 struct Interpreter_Value arg = transfer_value(&tmp);
                 struct Parser_Node* fdecl = vec_get(params, i);
+                
+                if (resolve_type(fdecl->data.decl.type) != tmp.type) {
+                    error_mmtype(resolve_type(fdecl->data.decl.type), tmp.type, pnode->pos);
+                    error_pos(node->pos);
+                }
                 map_add(&vars, fdecl->data.decl.name, &arg);
             }
             intrp.vars = &vars;
-
-            ret = execute(pnode_right(func->data.func.ast), NULL);
+            ret = execute(pnode_right(func.data.func.ast), NULL);
         } break;
         default:
+        EH_MESSAGE("Call to invalid type %s", type_names[func.type]);
+        error_pos(node->pos);
         break;
     }
 
@@ -348,7 +355,7 @@ struct Interpreter_Value intrp_run(struct Parser_Node* node, bool* should_return
             ret = assign(node);
         break;
         case PN_CALL:
-            ret = call(node);                        
+            ret = call(node);
         break;
         case PN_RETURN:
             ret = intrp_run(pnode_uvalue(node), should_return);
@@ -366,7 +373,7 @@ struct Interpreter_Value intrp_run(struct Parser_Node* node, bool* should_return
 
             if (node->addressing == PA_BINARY) {
                 if (cond.data.intg.val)
-                    ret = execute(pnode_right(node), should_return);
+                    ret = intrp_run(pnode_right(node), should_return);
             } else {
                 if (cond.data.intg.val)
                     ret = intrp_run(pnode_body(node), should_return);
@@ -380,7 +387,7 @@ struct Interpreter_Value intrp_run(struct Parser_Node* node, bool* should_return
             while (1) {
                 struct Interpreter_Value cond = intrp_run(pnode_left(node), should_return);
                 if (cond.data.intg.val)
-                    ret = execute(pnode_right(node), should_return);
+                    ret = intrp_run(pnode_right(node), should_return);
                 else break;
             }
         break;
