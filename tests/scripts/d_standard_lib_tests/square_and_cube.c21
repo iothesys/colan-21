@@ -13,7 +13,7 @@ square :: proc (value : int) int {
     return value * value;
 }
 
-square_float :: proc (value : f) float {
+square_float :: proc (value : float) float {
 
     return value * value;
 }
@@ -30,7 +30,7 @@ square_float :: proc (value : f) float {
     print(square(2));
     print(square_float(2.));
 
-    #print(cube(1.)); # still crashing in the weirdest of places
+    #print(cube(1.)); # this code should crash and it does. Don't uncomment unless you know what you're doing
     #print(cube_float(1));
     #print(square(1.));
     #print(square_float(1));

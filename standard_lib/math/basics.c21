@@ -3,7 +3,7 @@ square :: proc (value : int) int {
     return value * value;
 }
 
-square_float :: proc (value : f) float {
+square_float :: proc (value : float) float {
 
     return value * value;
 }
