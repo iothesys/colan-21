@@ -1,12 +1,12 @@
 absolute :: proc (value : int) int {
 
-    if (value < 0) return value * -1;
+    if (value < 0) return -value;
     return value;
 }
 
 absolute_float :: proc (value : float) float {
 
-    if (value < .) return value * -1.;
+    if (value < .) return -value;
     return value;
 }
 
