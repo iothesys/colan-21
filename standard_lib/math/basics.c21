@@ -40,7 +40,7 @@ absolute :: proc (value : int) int {
 
 absolute_float :: proc (value : float) float {
 
-    if (value < .) value * -1.;
+    if (value < .) return value * -1.;
     return value;
 }
 

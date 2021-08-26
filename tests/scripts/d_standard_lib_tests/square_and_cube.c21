@@ -1,0 +1,37 @@
+cube :: proc (value : int) int {
+
+    return value * value * value;
+}
+
+cube_float :: proc (value : float) float {
+
+    return value * value * value;
+}
+
+square :: proc (value : int) int {
+
+    return value * value;
+}
+
+square_float :: proc (value : f) float {
+
+    return value * value;
+}
+
+ main :: proc () void {
+
+    print(cube(1));
+    print(cube_float(1.));
+    print(square(1));
+    print(square_float(1.));
+
+    print(cube(2));
+    print(cube_float(2.));
+    print(square(2));
+    print(square_float(2.));
+
+    #print(cube(1.)); # still crashing in the weirdest of places
+    #print(cube_float(1));
+    #print(square(1.));
+    #print(square_float(1));
+ }
