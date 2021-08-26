@@ -1,79 +1,79 @@
-celsius_to_farenheit :: (celsius : float) float {
+celsius_to_farenheit :: proc (celsius : float) float {
 
     return celsius * 1.8 + 32.;
 }
 
-celsius_to_kelvin :: (celsius : float) float {
+celsius_to_kelvin :: proc (celsius : float) float {
 
     return celsius + 273.15;
 }
 
-farenheit_to_celsius :: (farenheit : float) float {
+farenheit_to_celsius :: proc (farenheit : float) float {
 
     return (farenheit - 32.) * (5. / 9.);
 }
 
-farenheit_to_kelvin :: (farenheit : float) float {
+farenheit_to_kelvin :: proc (farenheit : float) float {
 
     return (farenheit + 459.67) * (5. / 9.);
 }
 
-kelvin_to_celsius :: (kelvin : float) float {
+kelvin_to_celsius :: proc (kelvin : float) float {
 
     return kelvin − 273.15;
 }
 
-kelvin_to_farenheit :: (kelvin : float) float {
+kelvin_to_farenheit :: proc (kelvin : float) float {
 
     return kelvin * 1.8 - 459.67;
 }
 
-millimeter_to_inch :: (millimeter : float) float {
+millimeter_to_inch :: proc (millimeter : float) float {
 
     return millimeter * 5. / 127.;
 }
 
-inch_to_millimeter :: (inch : float) float {
+inch_to_millimeter :: proc (inch : float) float {
 
     return inch * 25.4;
 }
 
-meter_to_foot :: (meter : float) float {
+meter_to_foot :: proc (meter : float) float {
 
     return meter * 5000. / 127.;
 }
 
-foot_to_meter :: (foot : float) float {
+foot_to_meter :: proc (foot : float) float {
 
     return foot * .3048;
 }
 
-meter_to_yard :: (meter : float) float {
+meter_to_yard :: proc (meter : float) float {
 
     return meter * 1250. / 1143.;
 }
 
-yard_to_meter :: (yard : float) float {
+yard_to_meter :: proc (yard : float) float {
 
     return yard * 0.9144;
 }
 
-kilometer_to_mile :: (kilometer : float) float {
+kilometer_to_mile :: proc (kilometer : float) float {
 
     return kilometer * .621;
 }
 
-mile_to_kilometer :: (mile : float) float {
+mile_to_kilometer :: proc (mile : float) float {
 
     return mile * 1.609344;
 }
 
-kilometer_to_nautical_mile :: (kilometer : float) float {
+kilometer_to_nautical_mile :: proc (kilometer : float) float {
 
     return kilometer * .540;
 }
 
-nautical_mile_to_kilometer :: (nautical_mile : float) float {
+nautical_mile_to_kilometer :: proc (nautical_mile : float) float {
 
     return nautical_mile * 1.852;
 }

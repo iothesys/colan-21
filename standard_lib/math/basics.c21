@@ -1,14 +1,14 @@
-square :: (value : int) int {
+square :: proc (value : int) int {
 
     return value * value;
 }
 
-square_float :: (value : f) float {
+square_float :: proc (value : f) float {
 
     return value * value;
 }
 
-power :: (value : int, exponent : int) int {
+power :: proc (value : int, exponent : int) int {
 
     i := 0;
     while (i < exponent) {
@@ -20,7 +20,7 @@ power :: (value : int, exponent : int) int {
     return value;
 }
 
-power_float :: (value : float, exponent : int) int {
+power_float :: proc (value : float, exponent : int) int {
 
     i := 0;
     while (i < exponent) {
@@ -32,65 +32,65 @@ power_float :: (value : float, exponent : int) int {
     return value;
 }
 
-absolute :: (value : int) int {
+absolute :: proc (value : int) int {
 
     if (value < 0) return value  * -1;
     return value;
 }
 
-absolute_float :: (value : float) float {
+absolute_float :: proc (value : float) float {
 
     if (value < .) value * -1.;
     return value;
 }
 
-cube :: (value : int) int {
+cube :: proc (value : int) int {
 
     return value * value * value;
 }
 
-cube_float :: (value : float) float {
+cube_float :: proc (value : float) float {
 
     return value * value * value;
 }
 
-ceiling :: (value : float) int {
+ceiling :: proc (value : float) int {
 
     if (value >= . && value > float(int(value))) return int(value) + 1;
     return int(value);
 }
 
-floor :: (value : float) int {
+floor :: proc (value : float) int {
 
     if (value < . && float(int(value)) > value) return int(value) - 1;
     return int(value);
 }
 
-round :: (value : float) int {
+round :: proc (value : float) int {
 
     if (value < . || value < float(int(value)) + .5) return int(value);
     return int(value) + 1;
 }
 
-maximum :: (a : int, b : int) int {
+maximum :: proc (a : int, b : int) int {
 
     if (a > b) return a;
     return b;
 }
 
-maximum_float :: (a : float, b : float) float {
+maximum_float :: proc (a : float, b : float) float {
 
     if (a > b) return a;
     return b;
 }
 
-minimum :: (a : int, b : int) int {
+minimum :: proc (a : int, b : int) int {
 
     if (a < b) return a;
     return b;
 }
 
-minimum_float :: (a : float, b : float) float {
+minimum_float :: proc (a : float, b : float) float {
 
     if (a < b) return a;
     return b;
@@ -102,13 +102,13 @@ pi := 3.1415926535897931;
 
 e := 2.7182818284590451;
 
-factorial :: (n : int) int {
+factorial :: proc (n : int) int {
 
     if (!n) return 1;
     else return n * factorial(n - 1);
 }
 
-sqrt :: (n: float) float {
+sqrt :: proc (n: float) float {
     x := 1.0;
     iter := 100;
     while (iter) {
@@ -126,7 +126,7 @@ fib ::(n: int) int {
     return fib(n - 1) + fib(n - 2);
 }
 
-average :: (values : :float) float {
+average :: proc (values : :float) float {
 
     count := len(values);
     i = 0;
@@ -143,7 +143,7 @@ average :: (values : :float) float {
 
 # For now, the responsibility of sorting the values is the
 # burden of the user, however I'll have to do that myself eventually.
-median :: (values : :float) float {
+median :: proc (values : :float) float {
 
     count := len(values);
 
