@@ -260,13 +260,13 @@ static struct Interpreter_Value call(struct Parser_Node* node) {
 static enum Interpreter_Type resolve_type(struct Parser_Type type) {
     if (type.name.view[0] == ':') return IT_ARRAY;
     if (type.depths.size > 0) return IT_VOID;                               else
-    if (strview_eq(type.name, strview_from("int")))    return IT_INT;       else 
-    if (strview_eq(type.name, strview_from("struct"))) return IT_STRUCT;    else 
-    if (strview_eq(type.name, strview_from("float")))  return IT_FLOAT;     else 
-    if (strview_eq(type.name, strview_from("string"))) return IT_STRING;    else
-    if (strview_eq(type.name, strview_from("void"))) return IT_VOID;        else
+    if (strview_eq(type.name, strview_from("int")))     return IT_INT;      else 
+    if (strview_eq(type.name, strview_from("struct")))  return IT_STRUCT;   else 
+    if (strview_eq(type.name, strview_from("float")))   return IT_FLOAT;    else 
+    if (strview_eq(type.name, strview_from("string")))  return IT_STRING;   else
+    if (strview_eq(type.name, strview_from("void")))    return IT_VOID;     else
     // THIS IS TEMPORARY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    if (strview_eq(type.name, strview_from("_"))) return IT_VOID;
+    if (strview_eq(type.name, strview_from("_")))       return IT_VOID;
     else {
         EH_MESSAGE("Unknown type: '%.*s'", (int)type.name.size, type.name.view);
         error_pos(get_pos(type.name));    

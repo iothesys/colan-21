@@ -7,6 +7,17 @@ typedef struct Parser_State pstate_t;
 typedef struct Token tok_t;
 typedef enum Parser_Node_Kind pnode_kind_t;
 
+enum Checker_Subtype {
+    SPEC,
+    INFERRED_INT,
+    INFERRED_FLOAT,
+};
+
+struct Checker_Type {
+    enum Checker_Subtype subtype;
+    struct Parser_Type type;
+};  
+
 struct Map OF(pnode_t) env;
 
 static void err(pnode_t *node) {
@@ -105,25 +116,12 @@ void eh_setnote();
 
 static void rec_checker(pnode_t *node, struct Vec OF(strview_t) *decls) {
     switch (node->kind) {
-        case PN_DECL:
-            if (map_get(&env, node->data.decl.name) != NULL) {
-                pnode_t *previous = map_get(&env, node->data.decl.name);
-                EH_MESSAGE("Variable shadowed by following declaration");
-                eh_error_pos(previous->pos, parser_get_state()->lexer.src);
-                eh_setnote();
-                EH_MESSAGE("Shadowed here");
-                err(node);
-            }   
-            map_add(&env, node->data.decl.name, node);
-            vec_push(decls, &node->data.decl.name);
-            for (usize i = 0; i < node->children.size; i += 1) {
-                handle_macro(vec_get(&node->children, i));
-            }
-        break;
         case PN_MACRO:
             handle_macro(node);
         break;
         case PN_PROC: 
+        case PN_BODY:
+        case PN_TOPLEVEL:
         case PN_STRUCT: {
             struct Vec OF(strview_t) mydecls = vec_new(sizeof(strview_t));
             for (usize i = 0; i < node->children.size; i += 1) {
@@ -135,12 +133,54 @@ static void rec_checker(pnode_t *node, struct Vec OF(strview_t) *decls) {
             vec_drop(&mydecls);
         }
         break;
+        case PN_DECL:
+            if (map_get(&env, node->data.decl.name) != NULL) {
+                pnode_t *previous = map_get(&env, node->data.decl.name);
+                EH_MESSAGE("Variable shadowed by following declaration");
+                eh_error_pos(previous->pos, parser_get_state()->lexer.src);
+                eh_setnote();
+                EH_MESSAGE("Shadowed here");
+                err(node);
+            }   
+            map_add(&env, node->data.decl.name, node);
+            vec_push(decls, &node->data.decl.name);
+            goto def;
+        case PN_ASSIGN: {
+            pnode_t *lhs = pnode_left(node); 
+            if (!(lhs->kind == PN_IDENT || lhs->kind == PN_DECL)) {
+                EH_MESSAGE("Can't assign to this");
+                err(node);
+            }
+            if (lhs->kind == PN_IDENT && map_get(&env, lhs->data.ident.val) != NULL) {
+                pnode_t *decl = map_get(&env, lhs->data.ident.val);
+                if (decl->data.decl.constant) {
+                    EH_MESSAGE("Assignment to a constant value");
+                    eh_error_pos(node->pos, parser_get_state()->lexer.src);
+                    eh_setnote();
+                    EH_MESSAGE("Created here");
+                    err(decl);   
+                }
+            }
+            else if (lhs->kind == PN_DECL && !lhs->data.decl.constant) {
+                pnode_t *rhs = pnode_right(node);
+                if (rhs->kind == PN_PROC) {
+                    EH_MESSAGE("Direct procedure assignment must be constant. Use `%.*s :: proc ...` instead.", (int)lhs->data.decl.name.size, lhs->data.decl.name.view);
+                    err(node);
+                }
+                if (rhs->kind == PN_STRUCT) {
+                    EH_MESSAGE("Struct assignment must be constant. Use `%.*s :: struct ...` instead.", (int)lhs->data.decl.name.size, lhs->data.decl.name.view);
+                    err(node);
+                }
+            }
+            goto def;
+        }
+        def:
         default: 
             for (usize i = 0; i < node->children.size; i += 1) {
                 rec_checker(vec_get(&node->children, i), decls);
             }
     }
-} 
+}
 
 void checker_run(pnode_t *node) {
     env = map_new(sizeof(struct Parser_Node));

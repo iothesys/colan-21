@@ -68,6 +68,7 @@ struct Parser_Node {
     union {
         struct {
             struct Vec OF(strview_t) annotations;
+            bool constant;
             struct Parser_Type type;
             strview_t name;
         } decl;
@@ -81,23 +82,23 @@ struct Parser_Node {
             strview_t name;
         } init;
         struct {
-            strview_t val; 
+            strview_t val;
         } string;
         struct {
             enum Parser_Number_Kind kind;
-            strview_t val; 
+            strview_t val;
         } number;
         struct {
-            strview_t val; 
+            strview_t val;
         } ident;
         struct {
-            strview_t op; 
+            strview_t op;
         } op;
         struct {
-            strview_t op; 
+            strview_t op;
         } unary;
         struct {
-            strview_t name; 
+            strview_t name;
         } field;
     } data;
 };

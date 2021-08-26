@@ -29,7 +29,7 @@ static void getlinefrompos(usize pos, const string src, usize *line, usize *col)
     *line = 0;
     *col = 0;
     usize i;
-    for (i = 0; src[i] && i < pos; i += 1) {
+    for (i = 0; i < pos && src[i]; i += 1) {
         cl += 1;
         if (src[i] == '\n') {
             cl = 0;

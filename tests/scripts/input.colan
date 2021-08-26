@@ -1,4 +1,16 @@
-main := proc () void {
-    a : arr {int} = arr {1, 2, 3, 1}; 
-    print(len(a));
-};
+Vec2 :: struct {
+    x: float;
+    y: float;
+}
+
+main :: proc () {
+    x : arr {Vec2} = arr {
+        new Vec2 { x: 32, y: 32 },
+        new Vec2 { x: 10, y: 20 }
+    };
+    print(x{0}'x);
+}
+
+
+
+

@@ -7,6 +7,7 @@ typedef struct Token tok_t;
 typedef enum Parser_Node_Kind pnode_kind_t;
 
 static struct Parser_State parser;
+bool ignore_semi = false;
 
 struct {
     rune unmatched;
@@ -341,22 +342,27 @@ static pnode_t value();
 static pnode_t maybe_call() {
     usize start = pos();
     pnode_t left = value();
-    if (check("("))
-        return pnode_binary(start, PN_CALL, left, delimited(PN_PARAMS, "(", TT_COMMA, ")", false, false, most_important_expression));
-    else if (check("{")) {
-        skip_tt(TT_LBRACE);
-        pnode_t node = pnode_binary(start, PN_ACCESS, left, most_important_expression());
-        skip_tt(TT_RBRACE);
-        return node;
-    }
-    else if (check("'")) {
-        setexpect("If you want array access, use a{index} syntax");
-        pull();
-        tok_t name = pull();
-        assert_tt(&name, TT_IDENT);
-        pnode_t node = pnode_unary(start, PN_FIELD, left);
-        node.data.field.name = strview_span(name.span, parser.lexer.src);
-        return node;
+    while (true) {
+        if (check("("))
+            left = pnode_binary(start, PN_CALL, left, delimited(PN_PARAMS, "(", TT_COMMA, ")", false, false, most_important_expression));
+        else if (check("{")) {
+            skip_tt(TT_LBRACE);
+            pnode_t node = pnode_binary(start, PN_ACCESS, left, most_important_expression());
+            skip_tt(TT_RBRACE);
+            left = node;
+        }
+        else if (check("'")) {
+            setexpect("If you want array access, use a{index} syntax");
+            pull();
+            tok_t name = pull();
+            assert_tt(&name, TT_IDENT);
+            pnode_t node = pnode_unary(start, PN_FIELD, left);
+            node.data.field.name = strview_span(name.span, parser.lexer.src);
+            left = node;
+        }
+        else {
+            break;
+        }
     }
     return left;
 }
@@ -494,9 +500,14 @@ static pnode_t statement() {
         }
     }
     pnode_t node = most_important_expression();
-    setexpect("Expected semicolon instead");
-    skip_tt(TT_SEMI);
-    setexpect(NULL);
+    if (!ignore_semi) {
+        setexpect("Expected semicolon instead");
+        skip_tt(TT_SEMI);
+        setexpect(NULL);
+    }
+    else
+        skipdelim(TT_SEMI);
+    ignore_semi = false;
     return node;
 }
 
@@ -575,6 +586,7 @@ static pnode_t value() {
         }
         case TT_STRUCT:
             pull();
+            ignore_semi = true;
             return delimited(PN_STRUCT, "{", TT_SEMI, "}", true, false, pulldeclaration);
         case TT_ARR:
             pull();
@@ -595,6 +607,7 @@ static pnode_t value() {
                 body()
             );
             value_node.data.proc.return_type = returntype;
+            ignore_semi = true;
             return value_node;
         case TT_LBRACKET:
             return delimited(PN_MACRO, "[", TT_PIPE, "]", false, false, macro);
@@ -648,11 +661,17 @@ static pnode_t declaration(tok_t on) {
         .name = strview_from("_"),
         .depths = vec_new(sizeof(usize))
     };
-    if (!check("=")) {
+    if (!(check("=") || check(":"))) {
         vec_drop(&decl_node.data.decl.type.depths);
         decl_node.data.decl.type = typedecl();
     }
     decl_node.data.decl.annotations = leak_comments();
+    // Is constant?
+    if (check(":")) {
+        pull();
+        decl_node.data.decl.constant = true;
+        decl_node = pnode_binary(start, PN_ASSIGN, decl_node, most_important_expression());
+    }
     return decl_node;
 }
 

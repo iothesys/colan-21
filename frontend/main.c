@@ -148,15 +148,22 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Can't access file %s\n", argv[1]);
         return EXIT_FAILURE;
     } 
+    bool debug = false;
+    for (int i = 0; i < argc; i += 1) {
+        if (strcmp(argv[i], "--idebug") == 0) {
+            debug = true;
+        }
+    }
     eh_set_file(argv[1]);
     eh_init();
     parser_init(src);
     //printf("------\n%s\n------\n", parser_get_state()->lexer.src);
     struct Parser_Node result = parser_parse_toplevel();
     checker_run(&result);
-    //print_ast(&result, 0);
-    printf("------Running------\n");
-
+    if (debug) {
+        print_ast(&result, 0);
+        printf("------Running------\n");
+    }
     intrp_init();
 
     intrp_run(&result, NULL);
