@@ -1,0 +1,35 @@
+absolute :: proc (value : int) int {
+
+    if (value < 0) return value * -1;
+    return value;
+}
+
+absolute_float :: proc (value : float) float {
+
+    if (value < .) return value * -1.;
+    return value;
+}
+
+main :: proc () void {
+
+    print(absolute(-1));
+    print(absolute(-5));
+    print(absolute(-10));
+    #print(absolute(-1.)); # doesn't crash where it is expected to crash
+    #print(absolute(-5.)); # these floating point numbers crash on the condition in the function
+    #print(absolute(-10.));
+    print(absolute(1));
+    print(absolute(5));
+    print(absolute(10));
+
+    #print(absolute_float(-1)); # doesn't crash where it is expected to crash
+    #print(absolute_float(-5)); # these integers crash on the condition in the function
+    #print(absolute_float(-10));
+    #print(absolute_float(-1.));
+    #if (-1. < .) print(-1. * -1.);
+    #print(absolute_float(-5.));
+    #print(absolute_float(-10.));
+    #print(absolute_float(1.));
+    #print(absolute_float(5.));
+    #print(absolute_float(10.));
+}
