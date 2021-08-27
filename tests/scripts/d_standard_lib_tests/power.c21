@@ -1,0 +1,57 @@
+absolute :: proc (value : int) int {
+
+    if (value < 0) return -value;
+    return value;
+}
+
+absolute_float :: proc (value : float) float {
+
+    if (value < .) return -value;
+    return value;
+}
+
+power :: proc (value : int, exponent : int) int {
+
+    if (exponent == 0) return 1;
+
+    i := 0;
+    abs_exp := absolute(exponent);
+    while (i < abs_exp) {
+
+        value = value * value;
+        i = i + 1;
+    }
+
+    if (exponent < 0) value = 1 / value;
+
+    return value;
+}
+
+power_float :: proc (value : float, exponent : int) float {
+
+    if (exponent == 0) return 1.;
+
+    i := 0;
+    abs_exp := absolute(exponent);
+    while (i < abs_exp) {
+
+        value = value * value;
+        i = i + 1;
+    }
+
+    if (float(exponent) < .) value = 1. / value;
+
+    return value;
+}
+
+main :: proc () void {
+
+    print(power(2, 1));
+    print(power(3, 2));
+    print(power(4, 5));
+    print(power(8, 0));
+    print(power(5, -1));
+    print(power(2, -3));
+    print(power_float(.4, -2));
+    print(power_float(., 8.));
+}

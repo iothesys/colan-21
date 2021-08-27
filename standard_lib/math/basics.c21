@@ -10,24 +10,34 @@ square_float :: proc (value : float) float {
 
 power :: proc (value : int, exponent : int) int {
 
+    if (exponent == 0) return 1;
+
     i := 0;
-    while (i < exponent) {
+    abs_exp := absolute(exponent);
+    while (i < abs_exp) {
 
         value = value * value;
         i = i + 1;
     }
+
+    if (exponent < 0) value = 1 / value;
 
     return value;
 }
 
-power_float :: proc (value : float, exponent : int) int {
+power_float :: proc (value : float, exponent : int) float {
+
+    if (exponent == 0) return 1.;
 
     i := 0;
-    while (i < exponent) {
+    abs_exp := absolute(exponent);
+    while (i < abs_exp) {
 
         value = value * value;
         i = i + 1;
     }
+
+    if (float(exponent) < .) value = 1. / value;
 
     return value;
 }
