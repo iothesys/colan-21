@@ -1,0 +1,53 @@
+absolute_float :: proc (value : float) float {
+
+    if (value < .) return -value;
+    return value;
+}
+
+ceiling :: proc (value : float) int {
+
+    if (value >= . && value > float(int(value))) return int(value) + 1;
+    return int(value);
+}
+
+floor :: proc (value : float) int {
+
+    if (value < . && float(int(value)) > value) return int(value) - 1;
+    return int(value);
+}
+
+round :: proc (value : float) int {
+
+    if (value < . || absolute_float(value) < absolute_float(float(int(value))) + .5) return int(value);
+    return int(value) + 1;
+}
+
+main :: proc () void {
+
+    print(ceiling(.1), " = c0.1");      # 1
+    print(ceiling(1.2), " = c1.2");     # 2
+    print(ceiling(2.5), " = c2.5");     # 3
+    print(ceiling(-5.9), " = c-5.9");   # -5
+    print(ceiling(.), " = c0");         # 0
+    print(ceiling(10.), " = c10");      # 10
+    print(ceiling(-10.3), " = c-10.3"); # -10
+    print(ceiling(-31.), " = c-31");    # -31
+
+    print(floor(.1), " = f0.1");        # 0
+    print(floor(1.2), " = f1.2");       # 1
+    print(floor(2.5), " = f2.5");       # 2
+    print(floor(-5.9), " = f-5.9");     # -6
+    print(floor(.), " = f0");           # 0
+    print(floor(10.), " = f10");        # 10
+    print(floor(-10.3), " = f-10.3");   # -11
+    print(floor(-31.), " = f-31");      # -31
+
+    print(round(.1), " = r0.1");        # 0
+    print(round(1.2), " = r1.2");       # 1
+    print(round(2.5), " = r2.5");       # 3
+    print(round(-5.9), " = r-5.9");     # -6
+    print(round(.), " = r0");           # 0
+    print(round(10.), " = r10");        # 10
+    print(round(-10.3), " = r-10.3");   # -10
+    print(round(-31.), " = r-31");      # -31
+}
